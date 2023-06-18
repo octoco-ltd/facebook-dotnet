@@ -21,7 +21,7 @@ public class FacebookAdsAPI
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
     }
 
-    public async Task CreateCampaign(string adAccountId, string name, string objective, string status, List<string> specialAdCategories)
+    public async Task<string> CreateCampaign(string adAccountId, string name, string objective, string status, List<string> specialAdCategories)
     {
         var values = new Dictionary<string, string>
         {
@@ -35,19 +35,20 @@ public class FacebookAdsAPI
         var response = await client.PostAsync($"act_{adAccountId}/campaigns", content);
 
         var responseString = await response.Content.ReadAsStringAsync();
-        
+
         if(response.IsSuccessStatusCode)
-        {
-            Console.WriteLine("Campaign created successfully");
+        {   
+            Console.WriteLine("Campaign created successfully: " + responseString);
             return responseString;
         }
         else
         {
             Console.WriteLine($"Failed to create campaign: {responseString}");
+            return responseString;
         }
     }
 
-    public async Task CreateAdSet(string adAccountId, string campaignId, string name, string optimizationGoal, string billingEvent, int bidAmount, int dailyBudget, string status)
+    public async Task CreateAdSet(string adAccountId, string campaignId, string name, string optimizationGoal, string billingEvent, int bidAmount, int dailyBudget, string status, object targeting)
     {
         var values = new Dictionary<string, object>
         {
@@ -57,7 +58,8 @@ public class FacebookAdsAPI
             { "bid_amount", bidAmount },
             { "daily_budget", dailyBudget },
             { "campaign_id", campaignId },
-            { "status", status }
+            { "status", status },
+            { "targeting", targeting }
         };
         var content = new StringContent(JsonConvert.SerializeObject(values), Encoding.UTF8, "application/json");
 
@@ -67,8 +69,8 @@ public class FacebookAdsAPI
         
         if(response.IsSuccessStatusCode)
         {
-            Console.WriteLine("Ad set created successfully");
-            return responseString;
+            Console.WriteLine("Ad set created successfully: " + responseString);
+            // continue here
         }
         else
         {

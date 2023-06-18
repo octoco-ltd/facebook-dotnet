@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using DotNetEnv;
 
 namespace FacebookDotnet
@@ -19,16 +20,19 @@ namespace FacebookDotnet
             }
 
             var api = new FacebookAdsAPI(user_access_key);
-            string campaignId = await api.CreateCampaign(ads_account_id, "Revx Campaign 2", "OUTCOME_LEADS", "PAUSED", new List<string> { "NONE" });
+            string responseString = await api.CreateCampaign(ads_account_id, "Revx Campaign 2", "OUTCOME_LEADS", "PAUSED", new List<string> { "NONE" });
             
-            if (!string.IsNullOrEmpty(campaignId))
+            if (!string.IsNullOrEmpty(responseString))
             {
+                var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseString);
+                var id = jsonResponse["id"].ToString();
+                
                 var targeting = new Dictionary<string, object>
                 {
                     { "geo_locations", new Dictionary<string, List<string>> { { "countries", new List<string> { "ZA" } } } }
                 };
 
-                await api.CreateAdSet(ads_account_id, campaignId, "My Ad Set", "REACH", "IMPRESSIONS", 2, 1000, "PAUSED", targeting);
+                await api.CreateAdSet(ads_account_id, id, "My Ad Set", "REACH", "IMPRESSIONS", 2, 10000, "PAUSED", targeting);
             }
 
             Console.WriteLine("Press any key to exit...");
