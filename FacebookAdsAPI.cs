@@ -39,10 +39,40 @@ public class FacebookAdsAPI
         if(response.IsSuccessStatusCode)
         {
             Console.WriteLine("Campaign created successfully");
+            return responseString;
         }
         else
         {
             Console.WriteLine($"Failed to create campaign: {responseString}");
+        }
+    }
+
+    public async Task CreateAdSet(string adAccountId, string campaignId, string name, string optimizationGoal, string billingEvent, int bidAmount, int dailyBudget, string status)
+    {
+        var values = new Dictionary<string, object>
+        {
+            { "name", name },
+            { "optimization_goal", optimizationGoal },
+            { "billing_event", billingEvent },
+            { "bid_amount", bidAmount },
+            { "daily_budget", dailyBudget },
+            { "campaign_id", campaignId },
+            { "status", status }
+        };
+        var content = new StringContent(JsonConvert.SerializeObject(values), Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync($"act_{adAccountId}/adsets", content);
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        if(response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Ad set created successfully");
+            return responseString;
+        }
+        else
+        {
+            Console.WriteLine($"Failed to create ad set: {responseString}");
         }
     }
 }

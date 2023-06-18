@@ -19,7 +19,17 @@ namespace FacebookDotnet
             }
 
             var api = new FacebookAdsAPI(user_access_key);
-            await api.CreateCampaign(ads_account_id, "Revx Campaign 2", "OUTCOME_LEADS", "PAUSED", new List<string> { "NONE" });
+            string campaignId = await api.CreateCampaign(ads_account_id, "Revx Campaign 2", "OUTCOME_LEADS", "PAUSED", new List<string> { "NONE" });
+            
+            if (!string.IsNullOrEmpty(campaignId))
+            {
+                var targeting = new Dictionary<string, object>
+                {
+                    { "geo_locations", new Dictionary<string, List<string>> { { "countries", new List<string> { "ZA" } } } }
+                };
+
+                await api.CreateAdSet(ads_account_id, campaignId, "My Ad Set", "REACH", "IMPRESSIONS", 2, 1000, "PAUSED", targeting);
+            }
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
