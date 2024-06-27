@@ -10,6 +10,7 @@ Currently there is no C# SDK or community based wrapper for the Meta API. The pu
 ## To Do
 - Ad Creative
 - Ad
+- Adset
 
 # References
 - [Campaign Structure](https://developers.facebook.com/docs/marketing-api/campaign-structure)
